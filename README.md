@@ -1,2 +1,3 @@
 # local_twitter
-read tweets on android device without twitter
+read your favorite tweets on android device with a twitter-like app.
+still in progress.
