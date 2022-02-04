@@ -1,0 +1,22 @@
+import dependencies.Versions
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.1.0"
+
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+
+        classpath "com.google.dagger:hilt-android-gradle-plugin:${Versions.hilt}"
+
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:${Versions.junit5}"
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
