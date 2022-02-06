@@ -52,7 +52,7 @@ interface PostDao {
     @Query(
         """
         SELECT * FROM posts
-        WHERE authorId = :authorId AND created_at > :createdAt AND isFeed == 1
+        WHERE authorId = :authorId AND created_at < :createdAt AND isFeed == 1
         ORDER BY created_at DESC LIMIT :pageSize
         """
     )

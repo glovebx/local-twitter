@@ -5,15 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import xyz.mirage.app.business.domain.models.Post
 
 object ShareUtils {
 
     private const val WX_PACKAGE_NAME = "com.tencent.mm"
     private const val WX_SHARE_TO_CHAT_ACTIVITY = "com.tencent.mm.ui.tools.ShareImgUI"
+    private const val WX_SHARE_SCREEN_TO_TIMELINE_ACTIVITY = "com.tencent.mm.ui.tools.ShareScreenToTimeLineUI"
 
     // 发送到微信
-    fun send(context: Context, filetype: String, uriList: ArrayList<Uri>): Unit {
+    fun send(context: Context, filetype: String, uriList: ArrayList<Uri>) {
 
         val intent = Intent().apply {
             component = ComponentName(WX_PACKAGE_NAME, WX_SHARE_TO_CHAT_ACTIVITY)
@@ -41,7 +41,7 @@ object ShareUtils {
     }
 
     // 分享到朋友圈
-    fun share(context: Context, filetype: String, uriList: ArrayList<Uri>): Unit {
+    fun share(context: Context, filetype: String, uriList: ArrayList<Uri>) {
 
     }
 }

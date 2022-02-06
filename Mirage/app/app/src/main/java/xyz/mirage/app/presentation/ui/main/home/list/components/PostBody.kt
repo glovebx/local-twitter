@@ -8,20 +8,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.PlayerView
 import xyz.mirage.app.business.domain.models.Post
@@ -39,11 +42,40 @@ fun PostBody(
         )
     }
     val context = LocalContext.current
-    var simpleExoPlayer: SimpleExoPlayer? = null
+    val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
+    val simpleExoPlayer = remember {
+        SimpleExoPlayer.Builder(context).build().apply {
+            repeatMode = Player.REPEAT_MODE_ALL
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val lifecycle = lifecycleOwner.lifecycle
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> {
+                    simpleExoPlayer.playWhenReady = false
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    simpleExoPlayer.playWhenReady = true
+                }
+                Lifecycle.Event.ON_DESTROY -> {
+                    simpleExoPlayer.run {
+                        stop()
+                        release()
+                    }
+                }
+            }
+        }
+        lifecycle.addObserver(observer)
+        onDispose {
+            lifecycle.removeObserver(observer)
+        }
+    }
 
     DisposableEffect(key1 = post) {
         onDispose {
-            simpleExoPlayer?.let {
+            simpleExoPlayer.let {
                 if (it.isPlaying) it.pause()
                 it.release()
             }
@@ -55,9 +87,7 @@ fun PostBody(
 
         when(file.filetype) {
             "video" -> {
-                simpleExoPlayer = SimpleExoPlayer.Builder(context).build().also {
-                    it.setMediaItem(MediaItem.fromUri(file.url))
-                }
+                simpleExoPlayer.setMediaItem(MediaItem.fromUri(file.url))
                 AndroidView({
                     PlayerView(context).apply {
                         setControllerVisibilityListener {

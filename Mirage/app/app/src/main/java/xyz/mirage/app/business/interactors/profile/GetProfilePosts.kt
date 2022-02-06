@@ -29,7 +29,7 @@ class GetProfilePosts(
         val profile = cache.getProfileByUsername(username)?.toProfile()
         val posts = postDao.getFeed(
             profile!!.id,
-            createdAt = cursor.orEmpty()
+            createdAt = cursor ?: "2099-12-30 12:00:00"
         ).toPostList()
 
         emit(DataState.data(response = null, data = posts))

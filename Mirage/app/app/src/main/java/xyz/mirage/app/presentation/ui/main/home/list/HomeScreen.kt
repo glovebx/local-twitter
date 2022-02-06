@@ -70,11 +70,11 @@ fun HomeScreen(
                     isDarkTheme = isDarkTheme,
                 )
             },
-            floatingActionButton = {
-                CreatePostFab(
-                    handleClick = { navController.navigate(Screen.CreatePost.route) }
-                )
-            },
+//            floatingActionButton = {
+//                CreatePostFab(
+//                    handleClick = { navController.navigate(Screen.CreatePost.route) }
+//                )
+//            },
             bottomBar = {
                 NavBar(
                     navController = navController,
